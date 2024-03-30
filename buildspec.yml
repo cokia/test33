@@ -1,0 +1,27 @@
+version: 0.2
+env:
+  IMAGE_REPO_NAME: ws2-back
+  IMAGE_TAG: latest
+  AWS_DEFAULT_REGION: ap-northeast-2
+  AWS_ACCOUNT_ID: 241369644253
+  ENV: prod
+phases:
+  pre_build:
+    commands:
+      - echo Logging in to Amazon ECR...
+      - aws ecr get-login-password --region ap-northeast-2 | docker login --username AWS --password-stdin 048672284365.dkr.ecr.ap-northeast-2.amazonaws.com
+  build:
+    commands:
+      - echo Build started on `date`
+      - echo Building the Docker image...
+      - docker build -t ipms-prod-api --build-arg ENV=prod .
+      - docker tag ws-back:latest 241369644253.dkr.ecr.ap-northeast-2.amazonaws.com/ws2-back:latest
+  post_build:
+    commands:
+      - echo Build completed on `date`
+      - echo Pushing the Docker image...
+      - docker push 241369644253.dkr.ecr.ap-northeast-2.amazonaws.com/ws2-back:latest
+      - printf '[{"name":"ws2-back-ecs-container","imageUri":"%s"}]' 241369644253.dkr.ecr.ap-northeast-2.amazonaws.com/ws2-back:latest > imagedefinitions.json
+artifacts:
+  files: imagedefinitions.json
+
