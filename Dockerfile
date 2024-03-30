@@ -1,15 +1,17 @@
-# FROM openjdk:11-jre
-# COPY build/libs/*.jar app.jar
-# ENTRYPOINT ["java","-jar","app.jar"]
-
 FROM openjdk:11
 
 WORKDIR /app
 
 COPY . /app/
 
+RUN chmod 777 gradlew
+
 RUN ./gradlew clean build
 
-ENTRYPOINT ["java","-jar","build/libs/*.jar"]
-# 파일이 하나뿐이라 *.jar 로 한건데, 
-# 여러개의 jar 파일이 있다면, * 대신에 파일명을 적어주면 된다.
+RUN chmod 777 build/libs/*.jar
+
+EXPOSE 8080
+
+ENTRYPOINT ["java","-jar","build/libs/dockertes>
+
+# -PLAIN 파일은 절대 쓰면 안됨
